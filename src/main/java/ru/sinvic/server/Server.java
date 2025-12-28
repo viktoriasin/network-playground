@@ -1,4 +1,4 @@
-package ru.sinvic;
+package ru.sinvic.server;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,5 +11,4 @@ public class Server {
     public ResponseEntity<String> hello() {
         return ResponseEntity.ok("Ok!");
     }
-
 }
