@@ -13,14 +13,17 @@ import java.util.List;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
-public class Client {
+public class SimpleHttp1Client {
 
     private final static int ITERATIONS = 100;
 
     public static void main(String[] args) {
         List<Duration> durations = new ArrayList<>();
-        
-        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // за счет пула соединений, который в HttpClient создается, при запросе к одному хосту даже в HTTP1 расходы на установку нового соединения сведены к минимуму
+        HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .build();
         HttpRequest request = buildRequest();
 
         for (int i = 0; i < ITERATIONS; i++) {
@@ -40,7 +43,7 @@ public class Client {
             .build();
     }
 
-    private static void sendRequestAndSaveResponseTime(HttpClient httpClient, HttpRequest request, List<Duration> durations) {
+    private static void sendRequestAndSaveResponseTime(java.net.http.HttpClient httpClient, HttpRequest request, List<Duration> durations) {
         try {
             Instant startTime = Instant.now();
             HttpResponse<String> response = httpClient.send(request, ofString());
