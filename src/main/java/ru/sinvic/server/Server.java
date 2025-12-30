@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Server {
 
     @GetMapping("/ping")
-    public ResponseEntity<String> hello() {
+    public ResponseEntity<String> ping() {
         return ResponseEntity.ok("Ok!");
     }
 }

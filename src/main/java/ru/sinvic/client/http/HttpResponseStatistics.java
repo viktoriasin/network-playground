@@ -1,4 +1,4 @@
-package ru.sinvic.client;
+package ru.sinvic.client.http;
 
 public record HttpResponseStatistics(long maxTime, long minTime, long firstRequestTime, double averageTime) {
     @Override

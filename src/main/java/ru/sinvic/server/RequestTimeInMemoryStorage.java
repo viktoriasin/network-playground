@@ -4,30 +4,25 @@ import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
 public class RequestTimeInMemoryStorage {
 
-    private final Map<String, List<Long>> requestTime = new HashMap<>();
-
+    private final Map<String, Queue<Long>> requestTime = new ConcurrentHashMap<>();
 
     public void addDuration(String uriPath, Duration duration) {
         long millis = duration.toMillis();
-        requestTime.computeIfAbsent(uriPath, name -> new ArrayList<>()).add(millis);
-    }
-
-    public void deleteMethodStatistics(String methodName) {
-        requestTime.remove(methodName);
+        requestTime.computeIfAbsent(uriPath, name -> new ConcurrentLinkedQueue<>()).add(millis);
     }
 
     public RequestTimeStatisticsResult calculateRequestStatistic(@NonNull String uriPath) {
-        List<Long> requestTimes = requestTime.get(uriPath);
-        if (requestTimes == null) {
-            return new RequestTimeStatisticsResult(null, new IllegalArgumentException("There is no information for this uri path: " + uriPath));
+        Queue<Long> requestTimes = requestTime.get(uriPath);
+        if (requestTimes == null || requestTimes.isEmpty()) {
+            return new RequestTimeStatisticsResult(null, "There is no information for this uri path: " + uriPath);
         }
 
         long maxTime = requestTimes.stream().max(Long::compareTo).orElse(0L);
@@ -45,6 +40,6 @@ public class RequestTimeInMemoryStorage {
     public record RequestTimeStatistics(long maxTime, long minTime, double averageTime) {
     }
 
-    public record RequestTimeStatisticsResult(RequestTimeStatistics requestTimeStatistics, Exception error) {
+    public record RequestTimeStatisticsResult(RequestTimeStatistics requestTimeStatistics, String fallbackMessage) {
     }
 }
