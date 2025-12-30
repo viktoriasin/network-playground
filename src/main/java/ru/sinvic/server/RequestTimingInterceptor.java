@@ -2,6 +2,7 @@ package ru.sinvic.server;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -16,14 +17,14 @@ public class RequestTimingInterceptor implements HandlerInterceptor {
     private final RequestTimeInMemoryStorage requestTimeInMemoryStorage;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         Instant startTime = Instant.now();
         request.setAttribute("startTime", startTime);
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception ex) {
         Instant endTime = Instant.now();
         Instant startTime = (Instant) request.getAttribute("startTime");
 
