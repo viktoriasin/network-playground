@@ -30,6 +30,15 @@ public class SimpleHttpClient {
             .build();
     }
 
+    public Optional<String> sendRequest(@NonNull HttpRequest request) {
+        try {
+            return Optional.of(httpClient.send(request, ofString()).body());
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
     public void sendRequestsRepeated(@NonNull HttpRequest request) {
         if (isAsyncRequest) {
             sendAsyncRepeated(request);
