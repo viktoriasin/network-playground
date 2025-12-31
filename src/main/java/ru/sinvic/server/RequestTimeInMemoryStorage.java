@@ -32,11 +32,6 @@ public class RequestTimeInMemoryStorage {
         return new RequestTimeStatisticsResult(new RequestTimeStatistics(maxTime, minTime, averageTime), null);
     }
 
-    @Override
-    public String toString() {
-        return requestTime.toString();
-    }
-
     public record RequestTimeStatistics(long maxTime, long minTime, double averageTime) {
     }
 

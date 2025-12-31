@@ -1,9 +1,8 @@
-package ru.sinvic;
+package ru.sinvic.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import ru.sinvic.server.RequestTimeInMemoryStorage;
 
 @SpringBootApplication
 public class Application {

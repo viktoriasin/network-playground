@@ -1,7 +1,7 @@
 package ru.sinvic.client.http;
 
 import lombok.NonNull;
-import ru.sinvic.client.http.service.ResponseTimeMeasurer;
+import ru.sinvic.client.http.measurer.TimeMeasurer;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -18,17 +18,15 @@ public class SimpleHttpClient {
 
     private final int requestsCount;
     private final boolean isAsyncRequest;
-    private final HttpClient.Version httpVersion;
     private final HttpClient httpClient;
-    private final ResponseTimeMeasurer responseTimeMeasurer;
+    private final TimeMeasurer timeMeasurer;
 
-    public SimpleHttpClient(int requestsCount, boolean isAsyncRequest, @NonNull HttpClient.Version httpVersion, @NonNull ResponseTimeMeasurer responseTimeMeasurer) {
+    public SimpleHttpClient(int requestsCount, boolean isAsyncRequest, @NonNull HttpClient.Version httpVersion, @NonNull TimeMeasurer timeMeasurer) {
         this.requestsCount = requestsCount;
         this.isAsyncRequest = isAsyncRequest;
-        this.httpVersion = httpVersion;
-        this.responseTimeMeasurer = responseTimeMeasurer;
+        this.timeMeasurer = timeMeasurer;
         this.httpClient = HttpClient.newBuilder()
-            .version(this.httpVersion)
+            .version(httpVersion)
             .build();
     }
 
@@ -60,11 +58,11 @@ public class SimpleHttpClient {
     }
 
     private CompletableFuture<?> sendAsyncWithProfile(HttpRequest request) {
-        return responseTimeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()));
+        return timeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()));
     }
 
     private void sendSyncWithProfile(HttpRequest request) {
-        responseTimeMeasurer.measureTime(() -> {
+        timeMeasurer.measureTime(() -> {
             try {
                 return Optional.of(httpClient.send(request, ofString()));
             } catch (HttpTimeoutException e) {
