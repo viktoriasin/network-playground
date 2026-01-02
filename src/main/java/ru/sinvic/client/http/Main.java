@@ -15,7 +15,7 @@ public class Main {
         HttpRequest request = buildRequest("ping");
 
         TimeMeasurerImpl timeMeasurer = new TimeMeasurerImpl();
-        SimpleHttpClient simpleHttpClient = new SimpleHttpClient(100, true, HttpClient.Version.HTTP_1_1, timeMeasurer);
+        SimpleHttpClient simpleHttpClient = new SimpleHttpClient(1000, true, HttpClient.Version.HTTP_1_1, timeMeasurer);
 
         Instant startAllTime = Instant.now();
         simpleHttpClient.sendRequestsRepeated(request);
