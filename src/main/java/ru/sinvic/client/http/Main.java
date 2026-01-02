@@ -32,7 +32,6 @@ public class Main {
                     executeHttpRequests(simpleHttpClient, timeMeasurer);
                 } catch (Exception e) {
                     System.err.println("Ошибка при выполнении: " + e.getMessage());
-                    e.printStackTrace();
                 }
 
                 System.out.println("Выполнение завершено. Ожидание следующей команды...");
