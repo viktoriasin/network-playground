@@ -9,13 +9,45 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
-        HttpRequest request = buildRequest("ping");
-
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         TimeMeasurerImpl timeMeasurer = new TimeMeasurerImpl();
-        SimpleHttpClient simpleHttpClient = new SimpleHttpClient(1000, true, HttpClient.Version.HTTP_1_1, timeMeasurer);
+        SimpleHttpClient simpleHttpClient = new SimpleHttpClient(100, true, HttpClient.Version.HTTP_2, timeMeasurer, executorService);
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Ожидание команды... (введите 'start' для запуска или 'end' для завершения)");
+
+        while (true) {
+            String command = scanner.nextLine().trim();
+
+            if ("start".equalsIgnoreCase(command)) {
+                System.out.println("Старт выполнения...");
+
+                try {
+                    executeHttpRequests(simpleHttpClient, timeMeasurer);
+                } catch (Exception e) {
+                    System.err.println("Ошибка при выполнении: " + e.getMessage());
+                    e.printStackTrace();
+                }
+
+                System.out.println("Выполнение завершено. Ожидание следующей команды...");
+            } else if ("end".equalsIgnoreCase(command)) {
+                System.out.println("Завершение работы...");
+                scanner.close();
+                break;
+            } else {
+                System.out.println("Неизвестная команда. Введите 'start' или 'end work session'.");
+            }
+        }
+    }
+
+    public static void executeHttpRequests(SimpleHttpClient simpleHttpClient, TimeMeasurerImpl timeMeasurer) throws InterruptedException {
+        HttpRequest request = buildRequest("ping");
 
         Instant startAllTime = Instant.now();
         simpleHttpClient.sendRequestsRepeated(request);

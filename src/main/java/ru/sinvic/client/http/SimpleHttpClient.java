@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
@@ -21,12 +22,13 @@ public class SimpleHttpClient {
     private final HttpClient httpClient;
     private final TimeMeasurer timeMeasurer;
 
-    public SimpleHttpClient(int requestsCount, boolean isAsyncRequest, @NonNull HttpClient.Version httpVersion, @NonNull TimeMeasurer timeMeasurer) {
+    public SimpleHttpClient(int requestsCount, boolean isAsyncRequest, @NonNull HttpClient.Version httpVersion, TimeMeasurer timeMeasurer, ExecutorService executorService) {
         this.requestsCount = requestsCount;
         this.isAsyncRequest = isAsyncRequest;
         this.timeMeasurer = timeMeasurer;
         this.httpClient = HttpClient.newBuilder()
             .version(httpVersion)
+            .executor(executorService)
             .build();
     }
 
@@ -51,7 +53,9 @@ public class SimpleHttpClient {
         List<CompletableFuture<?>> responsesFuture = new ArrayList<>();
         for (int i = 0; i < requestsCount; i++) {
             CompletableFuture<?> httpResponseCompletableFuture = sendAsyncWithProfile(request);
-            responsesFuture.add(httpResponseCompletableFuture);
+            if (httpResponseCompletableFuture != null) {
+                responsesFuture.add(httpResponseCompletableFuture);
+            }
         }
         CompletableFuture<Void> voidCompletableFuture = CompletableFuture.allOf(responsesFuture.toArray(new CompletableFuture[0]));
         voidCompletableFuture
@@ -67,7 +71,11 @@ public class SimpleHttpClient {
     }
 
     private CompletableFuture<?> sendAsyncWithProfile(HttpRequest request) {
-        return timeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()));
+        return timeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()))
+            .exceptionally(ex -> {
+                System.out.println("Ошибка при выполнении асинхронного http запроса " + ex.getMessage());
+                return null;
+            });
     }
 
     private void sendSyncWithProfile(HttpRequest request) {
