@@ -1,4 +1,4 @@
-package ru.sinvic.server;
+package ru.sinvic.server.http;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

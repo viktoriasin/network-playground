@@ -1,4 +1,4 @@
-package ru.sinvic.server;
+package ru.sinvic.server.http;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Component;

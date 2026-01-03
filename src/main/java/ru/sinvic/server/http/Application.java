@@ -1,4 +1,4 @@
-package ru.sinvic.server;
+package ru.sinvic.server.http;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

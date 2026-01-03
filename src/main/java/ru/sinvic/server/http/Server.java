@@ -1,11 +1,11 @@
-package ru.sinvic.server;
+package ru.sinvic.server.http;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sinvic.server.RequestTimeInMemoryStorage.RequestTimeStatisticsResult;
+import ru.sinvic.server.http.RequestTimeInMemoryStorage.RequestTimeStatisticsResult;
 
 @RestController
 @RequiredArgsConstructor
