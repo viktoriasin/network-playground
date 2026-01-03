@@ -9,16 +9,16 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+public class ClientSocket {
+    private static final Logger logger = LoggerFactory.getLogger(ClientSocket.class);
     private static final int PORT = 8090;
     private static final String HOST = "localhost";
 
     public static void main(String[] args) {
-        sendSocketData();
+        new ClientSocket().sendSocketData();
     }
 
-    private static void sendSocketData() {
+    private void sendSocketData() {
         try {
             try (Socket clientSocket = new Socket(HOST, PORT)) {
                 PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
