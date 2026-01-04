@@ -1,5 +1,6 @@
 package ru.sinvic.client.socket.nio;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,19 +11,23 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 public class NIOClientSocket {
     private static final Logger logger = LoggerFactory.getLogger(NIOClientSocket.class);
 
     private static final int PORT = 8080;
     private static final String HOST = "localhost";
 
+    private final String clientName;
+
     public static void main(String[] args) {
-        new Thread(() -> new NIOClientSocket().startWorking("client-1")).start();
-        new Thread(() -> new NIOClientSocket().startWorking("client-2")).start();
+        new Thread(() -> new NIOClientSocket("client-1").startWorking()).start();
+        new Thread(() -> new NIOClientSocket("client-2").startWorking()).start();
     }
 
-    private void startWorking(String clientName) {
+    private void startWorking() {
         try {
             try (SocketChannel socketChannel = SocketChannel.open()) {
                 socketChannel.configureBlocking(false);
@@ -32,35 +37,42 @@ public class NIOClientSocket {
                 if (socketChannel.finishConnect()) {
                     logger.info("{} connected to server", clientName);
                 }
-                sendData(socketChannel, clientName);
-                handleServerResponse(socketChannel, clientName);
+                sendData(socketChannel, "hello from ");
+                handleServerResponse(socketChannel);
+                sleep();
+                logger.info("{} stop to server", clientName);
+                sendData(socketChannel, "stop");
             }
         } catch (IOException ex) {
             logger.error("exception", ex);
         }
     }
 
-    private void sendData(SocketChannel socketChannel, String clientName) throws IOException {
+    private void sendData(SocketChannel socketChannel, String clientRequest) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(1000);
-        buffer.put(("hello from " + clientName).getBytes());
+        if (clientRequest.equals("stop")) {
+            buffer.put(clientRequest.getBytes());
+        } else {
+            buffer.put((clientRequest + clientName).getBytes());
+        }
         buffer.flip();
         logger.info("{} sending data to server", clientName);
         socketChannel.write(buffer);
     }
 
-    private void handleServerResponse(SocketChannel socketChannel, String clientName) throws IOException {
+    private void handleServerResponse(SocketChannel socketChannel) throws IOException {
         try (Selector selector = Selector.open()) {
             socketChannel.register(selector, SelectionKey.OP_READ);
             logger.info("{} is waiting for server response", clientName);
             selector.select(selectionKey -> {
                 if (selectionKey.isReadable()) {
-                    processServerResponse((SocketChannel) selectionKey.channel(), clientName);
+                    processServerResponse((SocketChannel) selectionKey.channel());
                 }
             });
         }
     }
 
-    private void processServerResponse(SocketChannel socketChannel, String clientName) {
+    private void processServerResponse(SocketChannel socketChannel) {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(200);
 
@@ -79,6 +91,14 @@ public class NIOClientSocket {
             logger.info("server response for client {}: {}", clientName, response);
         } catch (Exception ex) {
             logger.error("exception", ex);
+        }
+    }
+
+    private static void sleep() {
+        try {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }
