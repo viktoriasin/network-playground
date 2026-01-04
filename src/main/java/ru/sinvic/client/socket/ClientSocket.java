@@ -18,11 +18,11 @@ public class ClientSocket {
     public static void main(String[] args) {
         AtomicInteger counter = new AtomicInteger(0);
         for (int i = 0; i < 5; i++) {
-            new Thread(() -> new ClientSocket().sendSocketData(counter.incrementAndGet())).start();
+            new Thread(() -> new ClientSocket().startWorking(counter.incrementAndGet())).start();
         }
     }
 
-    private void sendSocketData(int clientNumber) {
+    private void startWorking(int clientNumber) {
         try {
             try (Socket clientSocket = new Socket(HOST, PORT)) {
                 PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
