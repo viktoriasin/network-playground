@@ -31,21 +31,27 @@ public class SocketServer {
         }
     }
 
-    private static void handleClientConnection(Socket clientSocket) {
+    private void handleClientConnection(Socket clientSocket) {
         try (PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
              BufferedReader inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-            String stringFromClient = null;
-            while (!"stop".equals(stringFromClient)) {
-                stringFromClient = inputStream.readLine();
-                if (stringFromClient != null) {
-                    logger.info("from client: {}", stringFromClient);
-                    outputStream.println("Response from server! I got your message.");
+            int clientNumber = -1;
+            while (!Thread.currentThread().isInterrupted()) {
+                String stringFromClient = inputStream.readLine();
+                if (stringFromClient == null || "stop".equals(stringFromClient)) {
+                    logger.info("client {} finished", clientNumber);
+                    return;
                 }
+                clientNumber = extractClientNumber(stringFromClient);
+                logger.info("from client {}: {}", clientNumber, stringFromClient);
+                outputStream.println(String.format("Response from server to client %d ! I got your message.", clientNumber));
             }
-
         } catch (Exception ex) {
             logger.error("error", ex);
         }
         logger.info("");
+    }
+
+    private int extractClientNumber(String stringFromClient) {
+        return Integer.parseInt(String.valueOf(stringFromClient.charAt(stringFromClient.length() - 1)));
     }
 }

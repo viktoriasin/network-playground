@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClientSocket {
     private static final Logger logger = LoggerFactory.getLogger(ClientSocket.class);
@@ -15,23 +16,26 @@ public class ClientSocket {
     private static final String HOST = "localhost";
 
     public static void main(String[] args) {
-        new ClientSocket().sendSocketData();
+        AtomicInteger counter = new AtomicInteger(0);
+        for (int i = 0; i < 5; i++) {
+            new Thread(() -> new ClientSocket().sendSocketData(counter.incrementAndGet())).start();
+        }
     }
 
-    private void sendSocketData() {
+    private void sendSocketData(int clientNumber) {
         try {
             try (Socket clientSocket = new Socket(HOST, PORT)) {
                 PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-                String msg = "Hello from client";
+                String msg = String.format("Hello from client %d", clientNumber);
                 logger.info("sending to server: {}", msg);
                 outputStream.println(msg);
 
                 String responseMsg = inputStream.readLine();
                 logger.info("server response: {}", responseMsg);
                 Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-                logger.info("stop communication");
+                logger.info("client {} stop communication with server", clientNumber);
                 outputStream.println("stop");
 
                 logger.info("");
