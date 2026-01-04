@@ -8,10 +8,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SocketServer {
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
     private static final int PORT = 8090;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 
     public static void main(String[] args) {
@@ -22,10 +25,9 @@ public class SocketServer {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (!Thread.currentThread().isInterrupted()) {
                 logger.info("waiting for client connection");
-                try (Socket clientSocket = serverSocket.accept()) {
-                    handleClientConnection(clientSocket);
+                Socket clientSocket = serverSocket.accept();
+                executorService.submit(() -> handleClientConnection(clientSocket));
                 }
-            }
         } catch (Exception ex) {
             logger.error("error", ex);
         }
