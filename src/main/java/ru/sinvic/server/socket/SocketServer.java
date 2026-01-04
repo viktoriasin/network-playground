@@ -31,6 +31,7 @@ public class SocketServer {
         } catch (Exception ex) {
             logger.error("error", ex);
         }
+        executorService.shutdown();
     }
 
     private void handleClientConnection(Socket clientSocket) {
