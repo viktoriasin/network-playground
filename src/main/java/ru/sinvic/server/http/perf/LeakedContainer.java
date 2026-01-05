@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 @Component
 public class LeakedContainer {
     private static final Logger logger = LoggerFactory.getLogger(LeakedContainer.class);
-    private final ConcurrentLinkedQueue<List<Object>> storage = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<List<LeakedObject>> storage = new ConcurrentLinkedQueue<>();
 
     public void addObjects() {
         logger.info("add objects");
@@ -24,7 +24,7 @@ public class LeakedContainer {
         storage.clear();
     }
 
-    private List<Object> createObjects() {
-        return IntStream.range(0, 100).mapToObj(i -> new Object()).toList();
+    private List<LeakedObject> createObjects() {
+        return IntStream.range(0, 1).mapToObj(i -> new LeakedObject()).toList();
     }
 }

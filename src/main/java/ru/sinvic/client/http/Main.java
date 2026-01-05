@@ -38,6 +38,7 @@ public class Main {
             } else if ("end".equalsIgnoreCase(command)) {
                 System.out.println("Завершение работы...");
                 scanner.close();
+                executorService.shutdown();
                 break;
             } else {
                 System.out.println("Неизвестная команда. Введите 'start' или 'end work session'.");
