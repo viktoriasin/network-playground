@@ -63,7 +63,7 @@ public class NIOClientSocket {
     }
 
     private void handleServerResponse(SocketChannel socketChannel) throws IOException {
-        try (Selector selector = Selector.open()) {
+        Selector selector = Selector.open();
             socketChannel.register(selector, SelectionKey.OP_READ);
             logger.info("{} is waiting for server response", clientName);
             selector.select(selectionKey -> {
@@ -71,7 +71,7 @@ public class NIOClientSocket {
                     processServerResponse((SocketChannel) selectionKey.channel());
                 }
             });
-        }
+
     }
 
     private void processServerResponse(SocketChannel socketChannel) {

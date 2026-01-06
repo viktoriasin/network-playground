@@ -54,13 +54,12 @@ public class NIOSocketServer {
         logger.info("accept client connection, key:{}, selector:{}", selectionKey, selector);
 
         SocketChannel clientSocketChannel;
-        try (ServerSocketChannel channel = (ServerSocketChannel) selectionKey.channel()) {
-            clientSocketChannel = channel.accept();
+        ServerSocketChannel channel = (ServerSocketChannel) selectionKey.channel();
+        clientSocketChannel = channel.accept();
 
-            clientSocketChannel.configureBlocking(false);
-            clientSocketChannel.register(selector, SelectionKey.OP_READ);
-            logger.info("clientSocketChannel:{}", clientSocketChannel);
-        }
+        clientSocketChannel.configureBlocking(false);
+        clientSocketChannel.register(selector, SelectionKey.OP_READ);
+        logger.info("clientSocketChannel:{}", clientSocketChannel);
     }
 
     private void handleClientRequest(SelectionKey selectionKey) throws IOException {
