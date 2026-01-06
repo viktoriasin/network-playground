@@ -40,7 +40,6 @@ public class NIOClientSocket {
                 sendData(socketChannel, "hello from ");
                 handleServerResponse(socketChannel);
                 sleep();
-                logger.info("{} stop to server", clientName);
                 sendData(socketChannel, "stop");
             }
         } catch (IOException ex) {
@@ -50,13 +49,16 @@ public class NIOClientSocket {
 
     private void sendData(SocketChannel socketChannel, String clientRequest) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(1000);
+        String requestToServer;
         if (clientRequest.equals("stop")) {
-            buffer.put(clientRequest.getBytes());
+            requestToServer = clientRequest;
+            buffer.put(requestToServer.getBytes());
         } else {
-            buffer.put((clientRequest + clientName).getBytes());
+            requestToServer = clientRequest + clientName;
+            buffer.put(requestToServer.getBytes());
         }
         buffer.flip();
-        logger.info("{} sending data to server", clientName);
+        logger.info("{} sending request to server: {}", clientName, requestToServer);
         socketChannel.write(buffer);
     }
 

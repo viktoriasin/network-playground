@@ -27,7 +27,7 @@ public class SocketServer {
                 logger.info("waiting for client connection");
                 Socket clientSocket = serverSocket.accept();
                 executorService.submit(() -> handleClientConnection(clientSocket));
-                }
+            }
         } catch (Exception ex) {
             logger.error("error", ex);
         }
