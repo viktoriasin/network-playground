@@ -14,18 +14,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+    private static final String HOST = "localhost"; // localhost
+    private static final int PORT = 8080;
+
     public static void main(String[] args) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         TimeMeasurerImpl timeMeasurer = new TimeMeasurerImpl();
         SimpleHttpClient simpleHttpClient = new SimpleHttpClient(100, true, HttpClient.Version.HTTP_2, timeMeasurer, executorService);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Ожидание команды... (введите 'start' для запуска или 'end' для завершения)");
+        System.out.println("Ожидание команды... (введите 's' для запуска или 'e' для завершения)");
 
         while (true) {
             String command = scanner.nextLine().trim();
 
-            if ("start".equalsIgnoreCase(command)) {
+            if ("s".equalsIgnoreCase(command)) {
                 System.out.println("Старт выполнения...");
 
                 try {
@@ -35,7 +38,7 @@ public class Main {
                 }
 
                 System.out.println("Выполнение завершено. Ожидание следующей команды...");
-            } else if ("end".equalsIgnoreCase(command)) {
+            } else if ("e".equalsIgnoreCase(command)) {
                 System.out.println("Завершение работы...");
                 scanner.close();
                 executorService.shutdown();
@@ -62,7 +65,7 @@ public class Main {
 
     private static HttpRequest buildRequest(String route) {
         return HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/" + route))
+            .uri(URI.create(String.format("http://%s:%d/", HOST, PORT) + route))
             .GET()
             .timeout(Duration.ofSeconds(10))
             .build();
