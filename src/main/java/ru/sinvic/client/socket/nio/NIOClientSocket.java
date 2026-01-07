@@ -64,13 +64,13 @@ public class NIOClientSocket {
 
     private void handleServerResponse(SocketChannel socketChannel) throws IOException {
         Selector selector = Selector.open();
-            socketChannel.register(selector, SelectionKey.OP_READ);
-            logger.info("{} is waiting for server response", clientName);
-            selector.select(selectionKey -> {
-                if (selectionKey.isReadable()) {
-                    processServerResponse((SocketChannel) selectionKey.channel());
-                }
-            });
+        socketChannel.register(selector, SelectionKey.OP_READ);
+        logger.info("{} is waiting for server response", clientName);
+        selector.select(selectionKey -> {
+            if (selectionKey.isReadable()) {
+                processServerResponse((SocketChannel) selectionKey.channel());
+            }
+        });
 
     }
 
@@ -96,7 +96,7 @@ public class NIOClientSocket {
         }
     }
 
-    private static void sleep() {
+    private void sleep() {
         try {
             Thread.sleep(TimeUnit.SECONDS.toMillis(10));
         } catch (InterruptedException e) {
