@@ -12,6 +12,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
+// TODO: Merge with other server stuff
 public class NIOSocketServer {
     private static final Logger logger = LoggerFactory.getLogger(NIOSocketServer.class);
     private static final int PORT = 8080;

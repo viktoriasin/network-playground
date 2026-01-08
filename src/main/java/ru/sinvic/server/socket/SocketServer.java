@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// TODO: Merge with other server stuff
 public class SocketServer {
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
     private static final int PORT = 8090;

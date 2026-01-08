@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
+// TODO: Logger
 public class SimpleHttpClient {
 
     private final int requestsCount;
@@ -22,6 +23,7 @@ public class SimpleHttpClient {
     private final HttpClient httpClient;
     private final TimeMeasurer timeMeasurer;
 
+    // TODO: Move requestsCount & isAsyncRequest to method args
     public SimpleHttpClient(int requestsCount, boolean isAsyncRequest, @NonNull HttpClient.Version httpVersion, TimeMeasurer timeMeasurer, ExecutorService executorService) {
         this.requestsCount = requestsCount;
         this.isAsyncRequest = isAsyncRequest;
@@ -52,7 +54,7 @@ public class SimpleHttpClient {
     private void sendAsyncRepeated(HttpRequest request) {
         List<CompletableFuture<?>> responsesFuture = new ArrayList<>();
         for (int i = 0; i < requestsCount; i++) {
-            CompletableFuture<?> httpResponseCompletableFuture = sendAsyncWithProfile(request);
+            CompletableFuture<?> httpResponseCompletableFuture = sendAsyncMeasured(request);
             if (httpResponseCompletableFuture != null) {
                 responsesFuture.add(httpResponseCompletableFuture);
             }
@@ -65,12 +67,12 @@ public class SimpleHttpClient {
 
     private void sendSyncRepeated(HttpRequest request) {
         for (int i = 0; i < requestsCount; i++) {
-            sendSyncWithProfile(request);
+            sendSyncMeasured(request);
         }
         System.out.println("Работа sync http завершилась Было отправлено " + requestsCount + " запросов асинхронно.");
     }
 
-    private CompletableFuture<?> sendAsyncWithProfile(HttpRequest request) {
+    private CompletableFuture<?> sendAsyncMeasured(HttpRequest request) {
         return timeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()))
             .exceptionally(ex -> {
                 System.out.println("Ошибка при выполнении асинхронного http запроса " + ex.getMessage());
@@ -78,7 +80,7 @@ public class SimpleHttpClient {
             });
     }
 
-    private void sendSyncWithProfile(HttpRequest request) {
+    private void sendSyncMeasured(HttpRequest request) {
         timeMeasurer.measureTime(() -> {
             try {
                 return Optional.of(httpClient.send(request, ofString()));

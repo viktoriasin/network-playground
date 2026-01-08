@@ -16,8 +16,11 @@ import static ru.sinvic.client.http.util.StatisticsPrinter.printResponseTimeStat
 import static ru.sinvic.client.http.util.StatisticsPrinter.printServerStatistics;
 
 public class Main {
-    private static final String HOST = "localhost"; // localhost
-    private static final int PORT = 8080;
+    private static final String HOST = "localhost";
+    private static final int PORT = 80;
+
+    private static final String COMMAND_START = "s";
+    private static final String COMMAND_END = "e";
 
     public static void main(String[] args) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -25,12 +28,12 @@ public class Main {
         SimpleHttpClient simpleHttpClient = new SimpleHttpClient(100, true, HttpClient.Version.HTTP_2, timeMeasurer, executorService);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Ожидание команды... (введите 's' для запуска или 'e' для завершения)");
+        System.out.println("Ожидание команды... (введите '" + COMMAND_START + "' для запуска или '" + COMMAND_END + "' для завершения)");
 
         while (true) {
             String command = scanner.nextLine().trim();
 
-            if ("s".equalsIgnoreCase(command)) {
+            if (COMMAND_START.equalsIgnoreCase(command)) {
                 System.out.println("Старт выполнения...");
 
                 try {
@@ -40,13 +43,13 @@ public class Main {
                 }
 
                 System.out.println("Выполнение завершено. Ожидание следующей команды...");
-            } else if ("e".equalsIgnoreCase(command)) {
+            } else if (COMMAND_END.equalsIgnoreCase(command)) {
                 System.out.println("Завершение работы...");
                 scanner.close();
                 executorService.shutdown();
                 break;
             } else {
-                System.out.println("Неизвестная команда. Введите 'start' или 'end work session'.");
+                System.out.println("Неизвестная команда. Введите '" + COMMAND_START + "' или '" + COMMAND_END + "'");
             }
         }
     }
