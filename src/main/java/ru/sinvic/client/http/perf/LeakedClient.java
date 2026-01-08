@@ -2,20 +2,19 @@ package ru.sinvic.client.http.perf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sinvic.server.http.perf.LeakedContainer;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
+import static ru.sinvic.client.http.util.RequestHelper.buildRequest;
 
 public class LeakedClient {
-    private static final Logger logger = LoggerFactory.getLogger(LeakedContainer.class);
+    private static final Logger logger = LoggerFactory.getLogger(LeakedClient.class);
+    private static final String HOST = "localhost";
+    private static final int PORT = 8080;
 
     public static void main(String[] args) throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -34,22 +33,13 @@ public class LeakedClient {
         executorService.shutdown();
     }
 
-
-    private static HttpRequest buildRequest(String route) {
-        return HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/" + route))
-            .GET()
-            .timeout(Duration.ofSeconds(10))
-            .build();
-    }
-
     private static Object doWorkCreate(HttpClient httpClient) throws IOException, InterruptedException {
         logger.info("sending request");
-        return httpClient.send(buildRequest("create-objects"), ofString());
+        return httpClient.send(buildRequest(HOST, PORT, "create-objects"), ofString());
     }
 
     private static Object doWorkClear(HttpClient httpClient) throws IOException, InterruptedException {
         logger.info("sending request clear");
-        return httpClient.send(buildRequest("clear-objects"), ofString());
+        return httpClient.send(buildRequest(HOST, PORT, "clear-objects"), ofString());
     }
 }

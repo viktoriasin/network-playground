@@ -1,9 +1,7 @@
 package ru.sinvic.client.http;
 
-import ru.sinvic.client.http.measurer.MeasuredTimeStatistics;
 import ru.sinvic.client.http.measurer.TimeMeasurerImpl;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.time.Duration;
@@ -12,6 +10,10 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static ru.sinvic.client.http.util.RequestHelper.buildRequest;
+import static ru.sinvic.client.http.util.StatisticsPrinter.printResponseTimeStatistics;
+import static ru.sinvic.client.http.util.StatisticsPrinter.printServerStatistics;
 
 public class Main {
     private static final String HOST = "localhost"; // localhost
@@ -50,7 +52,7 @@ public class Main {
     }
 
     public static void executeHttpRequests(SimpleHttpClient simpleHttpClient, TimeMeasurerImpl timeMeasurer) throws InterruptedException {
-        HttpRequest request = buildRequest("ping");
+        HttpRequest request = buildRequest(HOST, PORT, "ping");
 
         Instant startAllTime = Instant.now();
         simpleHttpClient.sendRequestsRepeated(request);
@@ -59,28 +61,7 @@ public class Main {
         long totalTimeMs = Duration.between(startAllTime, endAllTime).toMillis();
         printResponseTimeStatistics(timeMeasurer.calculateStatistics(), totalTimeMs);
 
-        Optional<String> serverStatistics = simpleHttpClient.sendRequest(buildRequest("get-statistics?path=/ping"));
+        Optional<String> serverStatistics = simpleHttpClient.sendRequest(buildRequest(HOST, PORT, "get-statistics?path=/ping"));
         printServerStatistics(serverStatistics);
-    }
-
-    private static HttpRequest buildRequest(String route) {
-        return HttpRequest.newBuilder()
-            .uri(URI.create(String.format("http://%s:%d/", HOST, PORT) + route))
-            .GET()
-            .timeout(Duration.ofSeconds(10))
-            .build();
-    }
-
-    private static void printResponseTimeStatistics(MeasuredTimeStatistics statistics, long totalTimeMs) {
-        System.out.println("Всего времени было затрачено в миллисекундах: " + totalTimeMs);
-        System.out.println("Среднее время ответа в миллисекундах " + statistics.averageTime() +
-            "\nМаксимальное время ответа в миллисекундах " + statistics.maxTime() +
-            "\nМинимальное время ответа в миллисекундах " + statistics.minTime());
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static void printServerStatistics(Optional<String> serverStatistics) {
-        System.out.println("Статистика с сервера:");
-        System.out.println(serverStatistics.orElse("Не удалось собрать статистику с сервера."));
     }
 }
