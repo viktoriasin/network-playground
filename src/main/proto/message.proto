@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.sinvic.server;
+
+option java_multiple_files = true;
+
+message Number {
+  int32 num = 1;
+}
+
+message Empty {}
+
+service UserService {
+  rpc GetNumbers (Empty) returns (stream Number);
+}
