@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 @Component
 public class SocketServer {
-    private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
+    private static final Logger logger = LoggerFactory.getLogger("SocketServer");
     private static final int PORT = 8090;
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 

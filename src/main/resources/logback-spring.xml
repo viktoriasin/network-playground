@@ -1,0 +1,42 @@
+<configuration debug="true">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%logger{36}] [%thread] %highlight(%-5level) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="HTTP" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %boldGreen([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Socket" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %boldMagenta([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="NIO" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %boldCyan([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="ru.sinvic.server.http.Server" level="INFO" additivity="false">
+        <appender-ref ref="HTTP"/>
+    </logger>
+
+    <logger name="SocketServer" level="INFO" additivity="false">
+        <appender-ref ref="Socket"/>
+    </logger>
+
+    <logger name="NIOSocketServer" level="INFO" additivity="false">
+        <appender-ref ref="NIO"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class NIOSocketServer {
-    private static final Logger logger = LoggerFactory.getLogger(NIOSocketServer.class);
+    private static final Logger logger = LoggerFactory.getLogger("NIOSocketServer");
     private static final int PORT = 8080;
 
     public static void main(String[] args) throws IOException {
