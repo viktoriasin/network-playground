@@ -1,10 +1,14 @@
 package ru.sinvic.client.http.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sinvic.client.http.measurer.MeasuredTimeStatistics;
 
 import java.util.Optional;
 
 public class StatisticsPrinter {
+    private static final Logger logger = LoggerFactory.getLogger("StatisticsPrinter");
+
     public static void printResponseTimeStatistics(MeasuredTimeStatistics statistics, long totalTimeMs) {
         System.out.println("Всего времени было затрачено в миллисекундах: " + totalTimeMs);
         System.out.println("Среднее время ответа в миллисекундах " + statistics.averageTime() +

@@ -1,5 +1,7 @@
 package ru.sinvic.client.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sinvic.client.http.measurer.TimeMeasurerImpl;
 
 import java.net.http.HttpClient;
@@ -16,6 +18,8 @@ import static ru.sinvic.client.http.util.StatisticsPrinter.printResponseTimeStat
 import static ru.sinvic.client.http.util.StatisticsPrinter.printServerStatistics;
 
 public class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     private static final String HOST = "localhost";
     private static final int PORT = 80;
 
@@ -28,28 +32,28 @@ public class Main {
         SimpleHttpClient simpleHttpClient = new SimpleHttpClient(100, true, HttpClient.Version.HTTP_2, timeMeasurer, executorService);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Ожидание команды... (введите '" + COMMAND_START + "' для запуска или '" + COMMAND_END + "' для завершения)");
+        logger.info("Ожидание команды... (введите '" + COMMAND_START + "' для запуска или '" + COMMAND_END + "' для завершения)");
 
         while (true) {
             String command = scanner.nextLine().trim();
 
             if (COMMAND_START.equalsIgnoreCase(command)) {
-                System.out.println("Старт выполнения...");
+                logger.info("Старт выполнения...");
 
                 try {
                     executeHttpRequests(simpleHttpClient, timeMeasurer);
                 } catch (Exception e) {
-                    System.err.println("Ошибка при выполнении: " + e.getMessage());
+                    logger.error("Ошибка при выполнении: {}", e.getMessage());
                 }
 
                 System.out.println("Выполнение завершено. Ожидание следующей команды...");
             } else if (COMMAND_END.equalsIgnoreCase(command)) {
-                System.out.println("Завершение работы...");
+                logger.info("Завершение работы...");
                 scanner.close();
                 executorService.shutdown();
                 break;
             } else {
-                System.out.println("Неизвестная команда. Введите '" + COMMAND_START + "' или '" + COMMAND_END + "'");
+                logger.info("Неизвестная команда. Введите '" + COMMAND_START + "' или '" + COMMAND_END + "'");
             }
         }
     }

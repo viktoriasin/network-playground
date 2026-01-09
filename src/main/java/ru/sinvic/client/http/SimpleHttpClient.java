@@ -1,6 +1,8 @@
 package ru.sinvic.client.http;
 
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sinvic.client.http.measurer.TimeMeasurer;
 
 import java.io.IOException;
@@ -15,8 +17,8 @@ import java.util.concurrent.ExecutorService;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
-// TODO: Logger
 public class SimpleHttpClient {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleHttpClient.class);
 
     private final int requestsCount;
     private final boolean isAsyncRequest;
@@ -61,7 +63,7 @@ public class SimpleHttpClient {
         }
         CompletableFuture<Void> voidCompletableFuture = CompletableFuture.allOf(responsesFuture.toArray(new CompletableFuture[0]));
         voidCompletableFuture
-            .thenRun(() -> System.out.println("Работа async http завершилась. Было отправлено " + requestsCount + " запросов асинхронно."))
+            .thenRun(() -> logger.info("Работа async http завершилась. Было отправлено {} запросов асинхронно.", requestsCount))
             .join();
     }
 
@@ -69,13 +71,13 @@ public class SimpleHttpClient {
         for (int i = 0; i < requestsCount; i++) {
             sendSyncMeasured(request);
         }
-        System.out.println("Работа sync http завершилась Было отправлено " + requestsCount + " запросов асинхронно.");
+        logger.info("Работа sync http завершилась Было отправлено {} запросов асинхронно.", requestsCount);
     }
 
     private CompletableFuture<?> sendAsyncMeasured(HttpRequest request) {
         return timeMeasurer.measureTime(() -> httpClient.sendAsync(request, ofString()))
             .exceptionally(ex -> {
-                System.out.println("Ошибка при выполнении асинхронного http запроса " + ex.getMessage());
+                logger.error("Ошибка при выполнении асинхронного http запроса {}", ex.getMessage());
                 return null;
             });
     }
@@ -85,9 +87,9 @@ public class SimpleHttpClient {
             try {
                 return Optional.of(httpClient.send(request, ofString()));
             } catch (HttpTimeoutException e) {
-                System.err.println("ERROR: Request timed out");
+                logger.error("ERROR: Request timed out");
             } catch (IOException | InterruptedException e) {
-                System.err.println("ERROR: " + e.getMessage());
+                logger.error("ERROR: {}", e.getMessage());
             }
             return Optional.empty();
         });
