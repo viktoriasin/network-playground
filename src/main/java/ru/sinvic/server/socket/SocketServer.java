@@ -1,7 +1,9 @@
 package ru.sinvic.server.socket;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,7 +13,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// TODO: Merge with other server stuff
+@Component
 public class SocketServer {
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
     private static final int PORT = 8090;
@@ -19,10 +21,15 @@ public class SocketServer {
 
 
     public static void main(String[] args) {
-        new SocketServer().startSocket();
+        new SocketServer().startSocketServer();
     }
 
-    private void startSocket() {
+    @PostConstruct
+    private void startSocketServer() {
+        new Thread(this::run).start();
+    }
+
+    private void run() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (!Thread.currentThread().isInterrupted()) {
                 logger.info("waiting for client connection");
@@ -31,8 +38,9 @@ public class SocketServer {
             }
         } catch (Exception ex) {
             logger.error("error", ex);
+        } finally {
+            executorService.shutdown();
         }
-        executorService.shutdown();
     }
 
     private void handleClientConnection(Socket clientSocket) {

@@ -1,7 +1,9 @@
 package ru.sinvic.server.socket.nio;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,16 +14,21 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
-// TODO: Merge with other server stuff
+@Component
 public class NIOSocketServer {
     private static final Logger logger = LoggerFactory.getLogger(NIOSocketServer.class);
     private static final int PORT = 8080;
 
     public static void main(String[] args) throws IOException {
-        new NIOSocketServer().doWork();
+        new NIOSocketServer().run();
     }
 
-    private void doWork() throws IOException {
+    @PostConstruct
+    private void startNioSocketServer() {
+        new Thread(this::run).start();
+    }
+
+    private void run() {
         try (ServerSocketChannel socketChannel = ServerSocketChannel.open()) {
             socketChannel.configureBlocking(false);
             socketChannel.bind(new InetSocketAddress(PORT));
@@ -34,6 +41,8 @@ public class NIOSocketServer {
                     selector.select(this::processIO);
                 }
             }
+        } catch (Exception ex) {
+            logger.error("error", ex);
         }
     }
 
