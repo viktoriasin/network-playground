@@ -22,7 +22,7 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           APP_PATH: ${{ secrets.APP_PATH }}
         run: |
-          ssh -o StrictHostKeyChecking=no user@your-server.com \
+          ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} \
             "cd ${APP_PATH} && \
              git pull origin main && \
              mvn clean package"
