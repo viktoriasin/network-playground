@@ -25,7 +25,7 @@
 
     <appender name="GRPC" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %boldPink([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %boldBlue([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
         </encoder>
     </appender>
 
