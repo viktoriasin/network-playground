@@ -23,6 +23,12 @@
         </encoder>
     </appender>
 
+    <appender name="GRPC" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %boldPink([%logger{36}]) [%thread] %highlight(%-5level) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
 
     <logger name="ru.sinvic.server.http.Server" level="INFO" additivity="false">
         <appender-ref ref="HTTP"/>
@@ -34,6 +40,10 @@
 
     <logger name="NIOSocketServer" level="INFO" additivity="false">
         <appender-ref ref="NIO"/>
+    </logger>
+
+    <logger name="GRPCServer" level="INFO" additivity="false">
+        <appender-ref ref="GRPC"/>
     </logger>
 
     <root level="INFO">
