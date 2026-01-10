@@ -4,12 +4,15 @@ package ru.sinvic.server;
 
 option java_multiple_files = true;
 
-message Number {
-  int32 num = 1;
+message MessageObject {
+  int32 number = 1;
+  sint64 longNumber = 2;
+  bool isRandomNumber = 3;
+  string text = 4;
 }
 
 message Empty {}
 
-service UserService {
-  rpc GetNumbers (Empty) returns (stream Number);
+service MessageService {
+  rpc GetMessage (Empty) returns (MessageObject);
 }
