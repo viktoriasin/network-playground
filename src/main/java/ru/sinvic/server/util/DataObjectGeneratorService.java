@@ -15,7 +15,7 @@ public class DataObjectGeneratorService {
     public static DataObject generateDataObject(int requestId) {
         UUID uuid = UUID.randomUUID();
         boolean randomBoolean = random.nextBoolean();
-        String randomString = generateRandomStringFromBytesArray();
+        String randomString = generateRandomString();
         DataInnerObject dataInnerObject = generateInnerObject(requestId);
         return new DataObject(requestId, uuid, randomBoolean, randomString, dataInnerObject);
     }
@@ -24,10 +24,10 @@ public class DataObjectGeneratorService {
         return new DataInnerObject(requestId, INNER_OBJECT_STRING_FIELD);
     }
 
-    private static String generateRandomStringFromBytesArray() {
+    private static String generateRandomString() {
         byte[] arrayBytes = new byte[DATA_OBJECT_STRING_FIELD_LENGTH];
 
-        for (int i = 0; i < DATA_OBJECT_STRING_FIELD_LENGTH; i++) {
+        for (int i = 0; i < arrayBytes.length; i++) {
             arrayBytes[i] = (byte) (32 + random.nextInt(95));
         }
 

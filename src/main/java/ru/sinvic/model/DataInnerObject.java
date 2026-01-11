@@ -1,4 +1,6 @@
 package ru.sinvic.model;
 
-public record DataInnerObject(int requestId, String text) {
+import lombok.NonNull;
+
+public record DataInnerObject(int requestId, @NonNull String text) {
 }

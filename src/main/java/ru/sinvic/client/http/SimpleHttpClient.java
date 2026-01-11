@@ -71,7 +71,7 @@ public class SimpleHttpClient {
         }
         CompletableFuture<Void> voidCompletableFuture = CompletableFuture.allOf(responsesFuture.toArray(new CompletableFuture[0]));
         voidCompletableFuture
-            .thenRun(() -> logger.info("Работа async http завершилась. Было отправлено {} запросов асинхронно.", requestsCount))
+            .thenRun(() -> logger.debug("Работа async http завершилась. Было отправлено {} запросов асинхронно.", requestsCount))
             .join();
     }
 
@@ -79,7 +79,7 @@ public class SimpleHttpClient {
         for (int i = 0; i < requestsCount; i++) {
             sendSyncMeasured(request);
         }
-        logger.info("Работа sync http завершилась Было отправлено {} запросов асинхронно.", requestsCount);
+        logger.debug("Работа sync http завершилась Было отправлено {} запросов асинхронно.", requestsCount);
     }
 
     private CompletableFuture<?> sendAsyncMeasured(HttpRequest request) {

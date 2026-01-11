@@ -47,13 +47,13 @@ public class GRPCClient {
         new GRPCClient().run();
     }
 
-    public void request(CountDownLatch latch) throws InterruptedException {
+    public void request(CountDownLatch latch) {
         RequestMessage requestMessage = generateRequestMessage();
-        this.stub.getMessage(requestMessage, getResponseObserver(latch));
+        stub.getMessage(requestMessage, getResponseObserver(latch));
     }
 
     public void shutDown() {
-        this.channel.shutdown();
+        channel.shutdown();
     }
 
     public void run() throws InterruptedException {
@@ -62,19 +62,18 @@ public class GRPCClient {
 
         for (int i = 0; i < requestCount; i++) {
             RequestMessage requestMessage = generateRequestMessage();
-            logger.info("send request to server with request id {}", requestMessage.getRequestId());
+            logger.debug("send request to server with request id {}", requestMessage.getRequestId());
 
-            this.stub.getMessage(requestMessage, getResponseObserver(latch));
+            stub.getMessage(requestMessage, getResponseObserver(latch));
         }
-
 
         latch.await();
         this.channel.shutdown();
     }
 
     private void setChannelAndStub() {
-        this.channel = createChannel();
-        this.stub = MessageServiceGrpc.newStub(channel);
+        channel = createChannel();
+        stub = MessageServiceGrpc.newStub(channel);
     }
 
     private ManagedChannel createChannel() {
@@ -91,7 +90,7 @@ public class GRPCClient {
         return new StreamObserver<MessageObject>() {
             @Override
             public void onNext(MessageObject messageObject) {
-                logger.info("get response message {} from server", messageObjectToDataObject(messageObject));
+                logger.debug("get response message {} from server", messageObjectToDataObject(messageObject));
             }
 
             @Override
@@ -101,7 +100,7 @@ public class GRPCClient {
 
             @Override
             public void onCompleted() {
-                logger.info("finished server response..");
+                logger.debug("finished server response..");
                 latch.countDown();
             }
         };

@@ -14,7 +14,7 @@ import ru.sinvic.server.util.DataObjectGeneratorService;
 @RestController
 @RequiredArgsConstructor
 public class Server {
-    private static final Logger logger = LoggerFactory.getLogger("HttpServer");
+    private static final Logger logger = LoggerFactory.getLogger(Server.class.getSimpleName());
 
     private final RequestTimeInMemoryStorage requestTimeInMemoryStorage;
 
@@ -30,7 +30,7 @@ public class Server {
 
     @GetMapping("/get-message")
     public ResponseEntity<DataObject> getMessage(@RequestParam("request_id") int requestId) {
-        logger.info("HttpServer get request with request id: {}", requestId);
+        logger.debug("HttpServer get request with request id: {}", requestId);
         DataObject dataObject = DataObjectGeneratorService.generateDataObject(requestId);
         return ResponseEntity.ok(dataObject);
     }
