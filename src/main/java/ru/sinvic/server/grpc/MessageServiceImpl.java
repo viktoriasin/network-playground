@@ -3,11 +3,10 @@ package ru.sinvic.server.grpc;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sinvic.model.DataObject;
-import ru.sinvic.server.Empty;
 import ru.sinvic.server.InnerObject;
 import ru.sinvic.server.MessageObject;
 import ru.sinvic.server.MessageServiceGrpc;
+import ru.sinvic.server.RequestMessage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
@@ -20,20 +19,19 @@ public class MessageServiceImpl extends MessageServiceGrpc.MessageServiceImplBas
     private static final String INNER_OBJECT_STRING_FIELD = "Inner object";
     private static final int DATA_OBJECT_STRING_FIELD_LENGTH = 1000;
 
-    private final AtomicInteger requestNumber = new AtomicInteger(0);
     private final Random random = new Random();
 
     @Override
-    public void getMessage(Empty request, StreamObserver<MessageObject> responseObserver) {
-        logger.info("request for new message accepted..");
-        MessageObject messageObject = generateMessageObject();
+    public void getMessage(RequestMessage request, StreamObserver<MessageObject> responseObserver) {
+        int requestId = request.getRequestId();
+        logger.info("request for new message accepted for request id: {}", requestId);
+        MessageObject messageObject = generateMessageObject(requestId);
         responseObserver.onNext(messageObject);
         responseObserver.onCompleted();
-        logger.info("request for new message finished..");
+        logger.info("request for new message finished for request id: {}", requestId);
     }
 
-    private MessageObject generateMessageObject() {
-        int requestId = requestNumber.incrementAndGet();
+    private MessageObject generateMessageObject(int requestId) {
         UUID uuid = UUID.randomUUID();
         boolean randomBoolean = random.nextBoolean();
         String randomString = generateRandomStringFromBytesArray();
