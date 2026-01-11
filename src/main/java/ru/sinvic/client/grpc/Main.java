@@ -40,7 +40,7 @@ public class Main {
 
                 @Override
                 public void onCompleted() {
-                    logger.info("finished server response in thread {}", Thread.currentThread().getName());
+                    logger.info("finished server response");
                     latch.countDown();
                 }
             });

@@ -14,5 +14,5 @@ message MessageObject {
 message Empty {}
 
 service MessageService {
-  rpc GetMessage (Empty) returns (MessageObject);
+  rpc getMessage (Empty) returns (MessageObject);
 }

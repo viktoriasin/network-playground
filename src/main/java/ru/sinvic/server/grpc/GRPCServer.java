@@ -3,7 +3,6 @@ package ru.sinvic.server.grpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import jakarta.annotation.PostConstruct;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,7 @@ public class GRPCServer {
         }).start();
     }
 
-    public void run() throws IOException, InterruptedException {
+    private void run() throws IOException, InterruptedException {
         MessageServiceImpl messageService = new MessageServiceImpl();
         Server server = ServerBuilder
             .forPort(SERVER_PORT)
