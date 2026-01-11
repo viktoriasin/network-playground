@@ -4,11 +4,17 @@ package ru.sinvic.server;
 
 option java_multiple_files = true;
 
+message InnerObject {
+  int32 requestId = 1;
+  string text = 2;
+}
+
 message MessageObject {
-  int32 number = 1;
-  sint64 longNumber = 2;
-  bool isRandomNumber = 3;
+  int32 requestId = 1;
+  string uuid = 2;
+  bool randomBoolean = 3;
   string text = 4;
+  InnerObject innerObject = 5;
 }
 
 message Empty {}

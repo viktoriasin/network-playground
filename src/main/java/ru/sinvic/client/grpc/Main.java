@@ -4,12 +4,16 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.sinvic.model.DataInnerObject;
+import ru.sinvic.model.DataObject;
 import ru.sinvic.server.Empty;
+import ru.sinvic.server.InnerObject;
 import ru.sinvic.server.MessageObject;
 import ru.sinvic.server.MessageServiceGrpc;
-import ru.sinvic.server.grpc.DataObject;
 
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -52,6 +56,11 @@ public class Main {
     }
 
     public static DataObject messageObjectToDataObject(MessageObject messageObject) {
-        return new DataObject(messageObject.getNumber(), messageObject.getLongNumber(), messageObject.getIsRandomNumber(), messageObject.getText());
+        DataInnerObject dataInnerObject = getDataInnerObject(messageObject.getInnerObject());
+        return new DataObject(messageObject.getRequestId(), UUID.fromString(messageObject.getUuid()), messageObject.getRandomBoolean(), messageObject.getText(), dataInnerObject);
+    }
+
+    private static DataInnerObject getDataInnerObject(InnerObject innerObject) {
+        return new DataInnerObject(innerObject.getRequestId(), innerObject.getText());
     }
 }
