@@ -68,7 +68,7 @@ public class Main {
         long totalTimeMs = Duration.between(startAllTime, endAllTime).toMillis();
         printResponseTimeStatistics(timeMeasurer.calculateStatistics(), totalTimeMs);
 
-        Optional<String> serverStatistics = simpleHttpClient.sendRequest(buildRequest(HOST, PORT, "get-statistics?path=/ping"));
+        Optional<String> serverStatistics = simpleHttpClient.sendGetRequestSync(buildRequest(HOST, PORT, "get-statistics?path=/ping"));
         printServerStatistics(serverStatistics);
     }
 }

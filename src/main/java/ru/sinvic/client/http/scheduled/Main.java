@@ -35,7 +35,7 @@ public class Main {
         Thread.sleep(500);
 
         logger.info(timeMeasurer.calculateStatistics().toString());
-        Optional<String> serverStatistics = simpleHttpClient.sendRequest(buildRequest(HOST, PORT, "get-statistics?path=/" + ROUTE));
+        Optional<String> serverStatistics = simpleHttpClient.sendGetRequestSync(buildRequest(HOST, PORT, "get-statistics?path=/" + ROUTE));
         printServerStatistics(serverStatistics);
 
         executorServiceForHttpClient.shutdown();

@@ -47,11 +47,9 @@ public class GRPCClient {
         new GRPCClient().run();
     }
 
-    public void request() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+    public void request(CountDownLatch latch) throws InterruptedException {
         RequestMessage requestMessage = generateRequestMessage();
         this.stub.getMessage(requestMessage, getResponseObserver(latch));
-        latch.await();
     }
 
     public void shutDown() {

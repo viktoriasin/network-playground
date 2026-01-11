@@ -8,6 +8,7 @@ import ru.sinvic.client.http.measurer.TimeMeasurer;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +37,20 @@ public class SimpleHttpClient {
             .build();
     }
 
-    public Optional<String> sendRequest(@NonNull HttpRequest request) {
+    public Optional<String> sendGetRequestSync(@NonNull HttpRequest request) {
         try {
             return Optional.of(httpClient.send(request, ofString()).body());
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         return Optional.empty();
+    }
+
+    public CompletableFuture<HttpResponse<String>> sendGetRequestAsync(@NonNull HttpRequest getRequest) {
+        return httpClient.sendAsync(getRequest, ofString()).exceptionally(ex -> {
+            logger.error("Ошибка при выполнении асинхронного http post запроса {}", ex.getMessage());
+            return null;
+        });
     }
 
     public void sendRequestsRepeated(@NonNull HttpRequest request) {
