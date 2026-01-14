@@ -26,11 +26,9 @@ public class GRPCClient {
     private final String host;
     private final int port;
     private final int requestCount;
-
-    private ManagedChannel channel;
-    MessageServiceGrpc.MessageServiceStub stub;
-
     private final AtomicInteger requestId = new AtomicInteger(0);
+    MessageServiceGrpc.MessageServiceStub stub;
+    private ManagedChannel channel;
 
     public GRPCClient(String host, int port) {
         this.host = host;
@@ -45,6 +43,15 @@ public class GRPCClient {
 
     public static void main(String[] args) throws InterruptedException {
         new GRPCClient().run();
+    }
+
+    public static DataObject messageObjectToDataObject(MessageObject messageObject) {
+        DataInnerObject dataInnerObject = getDataInnerObject(messageObject.getInnerObject());
+        return new DataObject(messageObject.getRequestId(), UUID.fromString(messageObject.getUuid()), messageObject.getRandomBoolean(), messageObject.getText(), dataInnerObject);
+    }
+
+    private static DataInnerObject getDataInnerObject(InnerObject innerObject) {
+        return new DataInnerObject(innerObject.getRequestId(), innerObject.getText());
     }
 
     public void request(CountDownLatch latch) {
@@ -104,14 +111,5 @@ public class GRPCClient {
                 latch.countDown();
             }
         };
-    }
-
-    public static DataObject messageObjectToDataObject(MessageObject messageObject) {
-        DataInnerObject dataInnerObject = getDataInnerObject(messageObject.getInnerObject());
-        return new DataObject(messageObject.getRequestId(), UUID.fromString(messageObject.getUuid()), messageObject.getRandomBoolean(), messageObject.getText(), dataInnerObject);
-    }
-
-    private static DataInnerObject getDataInnerObject(InnerObject innerObject) {
-        return new DataInnerObject(innerObject.getRequestId(), innerObject.getText());
     }
 }

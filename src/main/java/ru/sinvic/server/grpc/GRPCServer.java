@@ -12,9 +12,8 @@ import java.util.concurrent.Executors;
 
 @Component
 public class GRPCServer {
-    private static final Logger logger = LoggerFactory.getLogger("GRPCServer");
-
     public static final int SERVER_PORT = 8190;
+    private static final Logger logger = LoggerFactory.getLogger("GRPCServer");
 
     public static void main(String[] args) {
         new GRPCServer().startGrpcServer();
